@@ -43,7 +43,6 @@ type Config struct {
 	RelayLimitDuration time.Duration      // Relay connection duration; default is 1min
 	RelayLimitData     int64              // Relay connection data limit; default is 64K
 	ReservationTTL        time.Duration   // How long to persist relay reservations; default is 1hr
-	ReservationRefreshTTL time.Duration   // How long before a reservation can be refresh; default is 5min
 	MaxReservations       int             // Maximum number of relay reservations; default is 64K
 	MaxCircuits           int             // Maximum number of active relay circuits per peer; default is 16
 	BufferSize            int             // Relay buffer side in each direction; default is 1KB

@@ -42,11 +42,10 @@ type Config struct {
 	RelayLimitDuration time.Duration
 	RelayLimitData     int64
 	// Relay Resources
-	ReservationTTL        time.Duration
-	ReservationRefreshTTL time.Duration
-	MaxReservations       int
-	MaxCircuits           int
-	BufferSize            int
+	ReservationTTL  time.Duration
+	MaxReservations int
+	MaxCircuits     int
+	BufferSize      int
 }
 
 func init() {
@@ -160,19 +159,18 @@ func loadConfig(cfgPath string) (Config, error) {
 
 func defaultConfig() Config {
 	return Config{
-		PprofPort:             6060,
-		QUICOnly:              true,
-		ListenAddrs:           []string{"/ip4/0.0.0.0/udp/4001/quic"},
-		ConnMgrLo:             1<<17 + 1<<16, // 192K
-		ConnMgrHi:             1 << 18,       // 256K
-		ConnMgrGrace:          5 * time.Minute,
-		RelayLimitDuration:    time.Minute,
-		RelayLimitData:        1 << 16, // 64K
-		ReservationTTL:        time.Hour,
-		ReservationRefreshTTL: 5 * time.Minute,
-		MaxReservations:       1 << 16, // 64K
-		MaxCircuits:           16,
-		BufferSize:            1024,
+		PprofPort:          6060,
+		QUICOnly:           true,
+		ListenAddrs:        []string{"/ip4/0.0.0.0/udp/4001/quic"},
+		ConnMgrLo:          1<<17 + 1<<16, // 192K
+		ConnMgrHi:          1 << 18,       // 256K
+		ConnMgrGrace:       5 * time.Minute,
+		RelayLimitDuration: time.Minute,
+		RelayLimitData:     1 << 16, // 64K
+		ReservationTTL:     time.Hour,
+		MaxReservations:    1 << 16, // 64K
+		MaxCircuits:        16,
+		BufferSize:         1024,
 	}
 }
 
@@ -182,11 +180,10 @@ func (cfg *Config) Resources() relay.Resources {
 			Duration: cfg.RelayLimitDuration,
 			Data:     cfg.RelayLimitData,
 		},
-		ReservationTTL:        cfg.ReservationTTL,
-		ReservationRefreshTTL: cfg.ReservationRefreshTTL,
-		MaxReservations:       cfg.MaxReservations,
-		MaxCircuits:           cfg.MaxCircuits,
-		BufferSize:            cfg.BufferSize,
+		ReservationTTL:  cfg.ReservationTTL,
+		MaxReservations: cfg.MaxReservations,
+		MaxCircuits:     cfg.MaxCircuits,
+		BufferSize:      cfg.BufferSize,
 	}
 }
 
