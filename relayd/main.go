@@ -129,7 +129,7 @@ func main() {
 	time.Sleep(10 * time.Millisecond)
 	fmt.Printf("starting relay...\n")
 
-	_, err = relay.New(ctx, host, relay.WithResources(cfg.Resources()))
+	_, err = relay.New(host, relay.WithResources(cfg.Resources()))
 	if err != nil {
 		panic(err)
 	}
@@ -166,7 +166,7 @@ func defaultConfig() Config {
 		ConnMgrHi:          1 << 18,       // 256K
 		ConnMgrGrace:       5 * time.Minute,
 		RelayLimitDuration: time.Minute,
-		RelayLimitData:     1 << 16, // 64K
+		RelayLimitData:     1 << 17, // 128K
 		ReservationTTL:     time.Hour,
 		MaxReservations:    1 << 16, // 64K
 		MaxCircuits:        16,
