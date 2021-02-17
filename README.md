@@ -46,6 +46,8 @@ type Config struct {
 	MaxReservations       int             // Maximum number of relay reservations; default is 64K
 	MaxCircuits           int             // Maximum number of active relay circuits per peer; default is 16
 	BufferSize            int             // Relay buffer side in each direction; default is 1KB
+	MaxReservationsPerIP  int             // IP Constraint of reservations per IP; default is 4
+	MaxReservationsPerASN int             // IP Constraint of reservations per ASN; default is 128
 }
 
 ```

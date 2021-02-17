@@ -12,13 +12,16 @@ import (
 
 	"github.com/libp2p/go-libp2p-circuit/v2/relay"
 
-	"github.com/libp2p/go-libp2p"
-	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	"github.com/libp2p/go-libp2p-core/crypto"
+
+	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+
+	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	noise "github.com/libp2p/go-libp2p-noise"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	tls "github.com/libp2p/go-libp2p-tls"
-	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	tcp "github.com/libp2p/go-tcp-transport"
 
 	logging "github.com/ipfs/go-log"
 	ma "github.com/multiformats/go-multiaddr"
@@ -46,6 +49,9 @@ type Config struct {
 	MaxReservations int
 	MaxCircuits     int
 	BufferSize      int
+	// IP Constraints
+	MaxReservationsPerIP  int
+	MaxReservationsPerASN int
 }
 
 func init() {
@@ -72,6 +78,7 @@ func main() {
 	opts = append(opts,
 		libp2p.Identity(privk),
 		libp2p.DisableRelay(),
+		libp2p.NoTransports,
 		libp2p.Security(noise.ID, noise.New),
 		libp2p.Security(tls.ID, tls.New),
 		libp2p.ListenAddrStrings(cfg.ListenAddrs...),
@@ -96,8 +103,8 @@ func main() {
 		)
 	} else {
 		opts = append(opts,
-			libp2p.DefaultTransports,
 			libp2p.Transport(quic.NewTransport),
+			libp2p.Transport(tcp.NewTCPTransport),
 		)
 	}
 
@@ -159,18 +166,20 @@ func loadConfig(cfgPath string) (Config, error) {
 
 func defaultConfig() Config {
 	return Config{
-		PprofPort:          6060,
-		QUICOnly:           true,
-		ListenAddrs:        []string{"/ip4/0.0.0.0/udp/4001/quic"},
-		ConnMgrLo:          1<<17 + 1<<16, // 192K
-		ConnMgrHi:          1 << 18,       // 256K
-		ConnMgrGrace:       5 * time.Minute,
-		RelayLimitDuration: time.Minute,
-		RelayLimitData:     1 << 17, // 128K
-		ReservationTTL:     time.Hour,
-		MaxReservations:    1 << 16, // 64K
-		MaxCircuits:        16,
-		BufferSize:         1024,
+		PprofPort:             6060,
+		QUICOnly:              true,
+		ListenAddrs:           []string{"/ip4/0.0.0.0/udp/4001/quic"},
+		ConnMgrLo:             1<<17 + 1<<16, // 192K
+		ConnMgrHi:             1 << 18,       // 256K
+		ConnMgrGrace:          5 * time.Minute,
+		RelayLimitDuration:    time.Minute,
+		RelayLimitData:        1 << 17, // 128K
+		ReservationTTL:        time.Hour,
+		MaxReservations:       1 << 16, // 64K
+		MaxCircuits:           16,
+		BufferSize:            1024,
+		MaxReservationsPerIP:  4,
+		MaxReservationsPerASN: 128,
 	}
 }
 
@@ -180,10 +189,12 @@ func (cfg *Config) Resources() relay.Resources {
 			Duration: cfg.RelayLimitDuration,
 			Data:     cfg.RelayLimitData,
 		},
-		ReservationTTL:  cfg.ReservationTTL,
-		MaxReservations: cfg.MaxReservations,
-		MaxCircuits:     cfg.MaxCircuits,
-		BufferSize:      cfg.BufferSize,
+		ReservationTTL:        cfg.ReservationTTL,
+		MaxReservations:       cfg.MaxReservations,
+		MaxCircuits:           cfg.MaxCircuits,
+		BufferSize:            cfg.BufferSize,
+		MaxReservationsPerIP:  cfg.MaxReservationsPerIP,
+		MaxReservationsPerASN: cfg.MaxReservationsPerASN,
 	}
 }
 
