@@ -40,7 +40,7 @@ type Config struct {
 	ConnMgrLo    int                      // Connection Manager low water mark; default is 192K
 	ConnMgrHi    int                      // Connection Manager high water mark; default is 256K
 	ConnMgrGrace time.Duration            // Connection Manager grace period; default is 5min
-	RelayLimitDuration time.Duration      // Relay connection duration; default is 1min
+	RelayLimitDuration time.Duration      // Relay connection duration; default is 2min
 	RelayLimitData     int64              // Relay connection data limit; default is 128K
 	ReservationTTL        time.Duration   // How long to persist relay reservations; default is 1hr
 	MaxReservations       int             // Maximum number of relay reservations; default is 64K

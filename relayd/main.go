@@ -172,7 +172,7 @@ func defaultConfig() Config {
 		ConnMgrLo:             1<<17 + 1<<16, // 192K
 		ConnMgrHi:             1 << 18,       // 256K
 		ConnMgrGrace:          5 * time.Minute,
-		RelayLimitDuration:    time.Minute,
+		RelayLimitDuration:    2 * time.Minute,
 		RelayLimitData:        1 << 17, // 128K
 		ReservationTTL:        time.Hour,
 		MaxReservations:       1 << 16, // 64K
