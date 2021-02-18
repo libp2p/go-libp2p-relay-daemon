@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/ipfs/go-log v1.0.4
 	github.com/libp2p/go-libp2p v0.13.1-0.20210217104917-ab83ffd7108a
-	github.com/libp2p/go-libp2p-circuit v0.4.1-0.20210217102616-cd8c53eb0a4f
+	github.com/libp2p/go-libp2p-circuit v0.4.1-0.20210218211009-2d282fb5cc2b
 	github.com/libp2p/go-libp2p-connmgr v0.2.4
 	github.com/libp2p/go-libp2p-core v0.8.2
 	github.com/libp2p/go-libp2p-noise v0.1.2
