@@ -246,8 +246,8 @@ github.com/libp2p/go-libp2p-blankhost v0.2.0/go.mod h1:eduNKXGTioTuQAUcZ5epXi9vM
 github.com/libp2p/go-libp2p-circuit v0.1.4/go.mod h1:CY67BrEjKNDhdTk8UgBX1Y/H5c3xkAcs3gnksxY7osU=
 github.com/libp2p/go-libp2p-circuit v0.2.1/go.mod h1:BXPwYDN5A8z4OEY9sOfr2DUQMLQvKt/6oku45YUmjIo=
 github.com/libp2p/go-libp2p-circuit v0.4.0/go.mod h1:t/ktoFIUzM6uLQ+o1G6NuBl2ANhBKN9Bc8jRIk31MoA=
-github.com/libp2p/go-libp2p-circuit v0.4.1-0.20210218211009-2d282fb5cc2b h1:vzwqZaj7iLDi+CRMdN0tgbQOf28LwYtjOsnzrSMuBBI=
-github.com/libp2p/go-libp2p-circuit v0.4.1-0.20210218211009-2d282fb5cc2b/go.mod h1:YeUzEy50jG3sJMhAUxj+VoAqcdLqWGmJ70QhcHb6r6E=
+github.com/libp2p/go-libp2p-circuit v0.4.1-0.20210219221135-acf512620b1a h1:o3lSbSYBFaiM6E7LSL3plAnsZlzS8w0rpcLccTwwtHc=
+github.com/libp2p/go-libp2p-circuit v0.4.1-0.20210219221135-acf512620b1a/go.mod h1:YeUzEy50jG3sJMhAUxj+VoAqcdLqWGmJ70QhcHb6r6E=
 github.com/libp2p/go-libp2p-connmgr v0.2.4 h1:TMS0vc0TCBomtQJyWr7fYxcVYYhx+q/2gF++G5Jkl/w=
 github.com/libp2p/go-libp2p-connmgr v0.2.4/go.mod h1:YV0b/RIm8NGPnnNWM7hG9Q38OeQiQfKhHCCs1++ufn0=
 github.com/libp2p/go-libp2p-core v0.0.1/go.mod h1:g/VxnTZ/1ygHxH3dKok7Vno1VfpvGcGip57wjTU4fco=
