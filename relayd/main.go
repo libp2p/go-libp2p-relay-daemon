@@ -60,8 +60,8 @@ func init() {
 }
 
 func main() {
-	idPath := flag.String("-id", "identity", "identity key file path")
-	cfgPath := flag.String("-config", "", "json configuration file; empty uses the default configuration")
+	idPath := flag.String("id", "identity", "identity key file path")
+	cfgPath := flag.String("config", "", "json configuration file; empty uses the default configuration")
 	flag.Parse()
 
 	cfg, err := loadConfig(*cfgPath)
