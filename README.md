@@ -51,3 +51,7 @@ type Config struct {
 }
 
 ```
+
+## License
+
+© vyzo; MIT License.
