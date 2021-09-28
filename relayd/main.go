@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -10,12 +9,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/libp2p/go-libp2p-circuit/v2/relay"
-
 	"github.com/libp2p/go-libp2p-core/crypto"
 
 	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	noise "github.com/libp2p/go-libp2p-noise"
@@ -23,7 +20,7 @@ import (
 	tls "github.com/libp2p/go-libp2p-tls"
 	tcp "github.com/libp2p/go-tcp-transport"
 
-	logging "github.com/ipfs/go-log"
+	logging "github.com/ipfs/go-log/v2"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 
@@ -55,7 +52,6 @@ type Config struct {
 }
 
 func init() {
-	identify.ClientVersion = "relayd/0.1"
 	logging.SetLogLevel("relay", "DEBUG")
 }
 
@@ -76,6 +72,7 @@ func main() {
 	var opts []libp2p.Option
 
 	opts = append(opts,
+		libp2p.UserAgent("relayd/1.0"),
 		libp2p.Identity(privk),
 		libp2p.DisableRelay(),
 		libp2p.NoTransports,
@@ -117,8 +114,7 @@ func main() {
 		libp2p.ConnectionManager(cm),
 	)
 
-	ctx := context.Background()
-	host, err := libp2p.New(ctx, opts...)
+	host, err := libp2p.New(opts...)
 	if err != nil {
 		panic(err)
 	}
