@@ -41,14 +41,26 @@ func main() {
 	)
 
 	if len(cfg.Network.AnnounceAddrs) > 0 {
-		var addrs []ma.Multiaddr
+		var announce []ma.Multiaddr
 		for _, s := range cfg.Network.AnnounceAddrs {
 			a := ma.StringCast(s)
-			addrs = append(addrs, a)
+			announce = append(announce, a)
 		}
 		opts = append(opts,
 			libp2p.AddrsFactory(func([]ma.Multiaddr) []ma.Multiaddr {
-				return addrs
+				return announce
+			}),
+		)
+	} else {
+		opts = append(opts,
+			libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
+				announce := make([]ma.Multiaddr, 0, len(addrs))
+				for _, a := range addrs {
+					if manet.IsPublicAddr(a) {
+						announce = append(announce, a)
+					}
+				}
+				return announce
 			}),
 		)
 	}
@@ -70,9 +82,7 @@ func main() {
 	fmt.Printf("I am %s\n", host.ID())
 	fmt.Printf("Public Addresses:\n")
 	for _, addr := range host.Addrs() {
-		if manet.IsPublicAddr(addr) {
-			fmt.Printf("\t%s/p2p/%s\n", addr, host.ID())
-		}
+		fmt.Printf("\t%s/p2p/%s\n", addr, host.ID())
 	}
 
 	go listenPprof(cfg.Daemon.PprofPort)
