@@ -1,7 +1,7 @@
-# libp2p-relay
-A limited relay daemon implementing the p2p-circuit/v2 hop protocol
+# relayd
 
-See https://github.com/libp2p/go-libp2p-circuit/pull/125
+This package provides `relayd`, a standalone daemon that provides libp2p circuit relay services,
+for both protocol versions v1 and v2.
 
 ## Instalation
 
@@ -28,28 +28,148 @@ You can specify the identity file path with the `-identity` option.
 ## Configuration
 
 `relayd` accepts a `-config` option that specifies its configuration; if omitted it will use
-the defaults.
+the defaults. Any field omitted from the configuration will retain its default value.
 
-The configuration struct is the following (with defaults noted):
-```
+The configuration struct is as following (with defaults noted):
+```go
+// relayd Configuration
 type Config struct {
-	PprofPort int                         // pprof port; default is 6060
-	QUICOnly      bool                    // whether to only support QUIC; default is true
-	ListenAddrs   []string                // list of listen multiaddrs; default is ["/ip4/0.0.0.0/udp/4001/quic"]
-	AnnounceAddrs []string                // list of announce multiaddrs; default is empty.
-	ConnMgrLo    int                      // Connection Manager low water mark; default is 192K
-	ConnMgrHi    int                      // Connection Manager high water mark; default is 256K
-	ConnMgrGrace time.Duration            // Connection Manager grace period; default is 5min
-	RelayLimitDuration time.Duration      // Relay connection duration; default is 2min
-	RelayLimitData     int64              // Relay connection data limit; default is 128K
-	ReservationTTL        time.Duration   // How long to persist relay reservations; default is 1hr
-	MaxReservations       int             // Maximum number of relay reservations; default is 64K
-	MaxCircuits           int             // Maximum number of active relay circuits per peer; default is 16
-	BufferSize            int             // Relay buffer side in each direction; default is 1KB
-	MaxReservationsPerIP  int             // IP Constraint of reservations per IP; default is 4
-	MaxReservationsPerASN int             // IP Constraint of reservations per ASN; default is 128
+	Network NetworkConfig
+	ConnMgr ConnMgrConfig
+	RelayV1 RelayV1Config
+	RelayV2 RelayV2Config
+	ACL     ACLConfig
+	Daemon  DaemonConfig
 }
 
+// General daemon options
+type DaemonConfig struct {
+    // pprof port; default is 6060
+	PprofPort int
+}
+
+// Networking configuration
+type NetworkConfig struct {
+    // Addresses to listen on, as multiaddrs.
+    // Default:
+    //  [
+    //    "/ip4/0.0.0.0/udp/4001/quic",
+    //    "/ip6/::/udp/4001/quic",
+    //	  "/ip4/0.0.0.0/tcp/4001",
+    //    "/ip6/::/tcp/4001",
+    //  ]
+	ListenAddrs   []string
+
+    // Address to announce to the network, as multiaddrs.
+    // Default is empty, which announces all public listen addresses to the network.
+	AnnounceAddrs []string
+}
+
+// Connection Manager configuration
+type ConnMgrConfig struct {
+    // Connection low water mark; default is 512
+	ConnMgrLo    int
+
+    // Connection high water mark; default is 768
+	ConnMgrHi    int
+
+    // Connection grace period; default is 2 minutes
+	ConnMgrGrace time.Duration
+}
+
+// Circuit Relay v1 support
+type RelayV1Config struct {
+    // Whether to enable v1 relay; default is false
+	Enabled   bool
+
+    // relayv1 resource limits; see below
+	Resources relayv1.Resources
+}
+
+// Circuit Relay v2 support
+type RelayV2Config struct {
+    // whther to enable v2 relay; default is true
+	Enabled   bool
+
+    // relayv2 resource limits; see below
+	Resources relayv2.Resources
+}
+
+// Access Control Lists
+type ACLConfig struct {
+    // List of peer IDs to allow reservations (v2) or hops to (v1).
+    // If empty, then the relay is open and will allow reservations/relaying for any peer.
+    // Default is empty.
+	AllowPeers   []string
+
+    // List of (CIDR) subnets to allow reservations (v2) or hops to (v1).
+    // If empty, then the relay is open and will allow reservations/relaying for any network.
+    // Default is empty
+	AllowSubnets []string
+}
+
+```
+
+### Relay v1 Resource Limits
+```go
+// Rsources are the resource limits associated with the v1 relay service
+type Resources struct {
+	// MaxCircuits is the maximum number of active relay connections.
+    // Default is 1024.
+	MaxCircuits int
+
+	// MaxCircuitsPerPeer is the maximum number of active relay connections per peer
+    // Default is 64.
+	MaxCircuitsPerPeer int
+
+	// BufferSize is the buffer size for relaying in each direction.
+    // Default is 4096
+	BufferSize int
+}
+```
+
+### Relay v2 Resource Limits
+```go
+// Resources are the resource limits associated with the v2 relay service.
+type Resources struct {
+	// Limit is the (optional) relayed connection limits.
+	Limit *RelayLimit
+
+	// ReservationTTL is the duration of a new (or refreshed reservation).
+	// Defaults to 1hr.
+	ReservationTTL time.Duration
+
+	// MaxReservations is the maximum number of active relay slots; defaults to 128.
+	MaxReservations int
+
+	// MaxCircuits is the maximum number of open relay connections for each peer; defaults to 16.
+	MaxCircuits int
+
+	// BufferSize is the size of the relayed connection buffers; defaults to 2048.
+	BufferSize int
+
+	// MaxReservationsPerPeer is the maximum number of reservations originating from the same
+	// peer; default is 4.
+	MaxReservationsPerPeer int
+
+	// MaxReservationsPerIP is the maximum number of reservations originating from the same
+	// IP address; default is 8.
+	MaxReservationsPerIP int
+
+	// MaxReservationsPerASN is the maximum number of reservations origination from the same
+	// ASN; default is 32
+	MaxReservationsPerASN int
+}
+
+// RelayLimit are the per relayed connection resource limits.
+type RelayLimit struct {
+	// Duration is the time limit before resetting a relayed connection; defaults to 2min.
+	Duration time.Duration
+
+	// Data is the limit of data relayed (on each direction) before resetting the connection.
+	// Defaults to 128KB
+	Data int64
+}
 ```
 
 ## License
