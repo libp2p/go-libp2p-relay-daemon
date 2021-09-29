@@ -85,7 +85,9 @@ func main() {
 		fmt.Printf("\t%s/p2p/%s\n", addr, host.ID())
 	}
 
+	go listenPprof(cfg.Daemon.PprofPort)
 	time.Sleep(10 * time.Millisecond)
+
 	fmt.Printf("starting relay...\n")
 
 	acl, err := NewACL(host, cfg.ACL)
@@ -111,7 +113,6 @@ func main() {
 		}
 	}
 
-	go listenPprof(cfg.Daemon.PprofPort)
 	select {}
 }
 
