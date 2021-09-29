@@ -5,64 +5,75 @@ import (
 	"os"
 	"time"
 
-	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
+	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
 
 type Config struct {
-	// pprof
+	Network NetworkConfig
+	ConnMgr ConnMgrConfig
+	RelayV1 RelayV1Config
+	RelayV2 RelayV2Config
+	ACL     ACLConfig
+	Daemon  DaemonConfig
+}
+
+type DaemonConfig struct {
 	PprofPort int
-	// Networking
-	QUICOnly      bool
+}
+
+type NetworkConfig struct {
 	ListenAddrs   []string
 	AnnounceAddrs []string
-	// Connection Manager Limits
+}
+
+type ConnMgrConfig struct {
 	ConnMgrLo    int
 	ConnMgrHi    int
 	ConnMgrGrace time.Duration
-	// Relay Limits
-	RelayLimitDuration time.Duration
-	RelayLimitData     int64
-	// Relay Resources
-	ReservationTTL  time.Duration
-	MaxReservations int
-	MaxCircuits     int
-	BufferSize      int
-	// IP Constraints
-	MaxReservationsPerIP  int
-	MaxReservationsPerASN int
+}
+
+type RelayV1Config struct {
+	Enabled   bool
+	Resources relayv1.Resources
+}
+
+type RelayV2Config struct {
+	Enabled   bool
+	Resources relayv2.Resources
+}
+
+type ACLConfig struct {
+	AllowPeers   []string
+	AllowSubnets []string
 }
 
 func defaultConfig() Config {
 	return Config{
-		PprofPort:             6060,
-		QUICOnly:              true,
-		ListenAddrs:           []string{"/ip4/0.0.0.0/udp/4001/quic"},
-		ConnMgrLo:             1<<17 + 1<<16, // 192K
-		ConnMgrHi:             1 << 18,       // 256K
-		ConnMgrGrace:          5 * time.Minute,
-		RelayLimitDuration:    2 * time.Minute,
-		RelayLimitData:        1 << 17, // 128K
-		ReservationTTL:        time.Hour,
-		MaxReservations:       1 << 16, // 64K
-		MaxCircuits:           16,
-		BufferSize:            1024,
-		MaxReservationsPerIP:  4,
-		MaxReservationsPerASN: 128,
-	}
-}
-
-func (cfg *Config) Resources() relay.Resources {
-	return relay.Resources{
-		Limit: &relay.RelayLimit{
-			Duration: cfg.RelayLimitDuration,
-			Data:     cfg.RelayLimitData,
+		Network: NetworkConfig{
+			ListenAddrs: []string{
+				"/ip4/0.0.0.0/udp/4001/quic",
+				"/ip6/::/udp/4001/quic",
+				"/ip4/0.0.0.0/tcp/4001",
+				"/ip6/::/tcp/4001",
+			},
 		},
-		ReservationTTL:        cfg.ReservationTTL,
-		MaxReservations:       cfg.MaxReservations,
-		MaxCircuits:           cfg.MaxCircuits,
-		BufferSize:            cfg.BufferSize,
-		MaxReservationsPerIP:  cfg.MaxReservationsPerIP,
-		MaxReservationsPerASN: cfg.MaxReservationsPerASN,
+		ConnMgr: ConnMgrConfig{
+			ConnMgrLo:    512,
+			ConnMgrHi:    768,
+			ConnMgrGrace: 2 * time.Minute,
+		},
+		RelayV1: RelayV1Config{
+			Enabled:   false,
+			Resources: relayv1.DefaultResources(),
+		},
+		RelayV2: RelayV2Config{
+			Enabled:   true,
+			Resources: relayv2.DefaultResources(),
+		},
+		Daemon: DaemonConfig{
+			PprofPort: 6060,
+		},
 	}
 }
 

@@ -7,14 +7,10 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
+	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
-	noise "github.com/libp2p/go-libp2p-noise"
-	quic "github.com/libp2p/go-libp2p-quic-transport"
-	tls "github.com/libp2p/go-libp2p-tls"
-	tcp "github.com/libp2p/go-tcp-transport"
-
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 
@@ -41,15 +37,12 @@ func main() {
 		libp2p.UserAgent("relayd/1.0"),
 		libp2p.Identity(privk),
 		libp2p.DisableRelay(),
-		libp2p.NoTransports,
-		libp2p.Security(noise.ID, noise.New),
-		libp2p.Security(tls.ID, tls.New),
-		libp2p.ListenAddrStrings(cfg.ListenAddrs...),
+		libp2p.ListenAddrStrings(cfg.Network.ListenAddrs...),
 	)
 
-	if len(cfg.AnnounceAddrs) > 0 {
+	if len(cfg.Network.AnnounceAddrs) > 0 {
 		var addrs []ma.Multiaddr
-		for _, s := range cfg.AnnounceAddrs {
+		for _, s := range cfg.Network.AnnounceAddrs {
 			a := ma.StringCast(s)
 			addrs = append(addrs, a)
 		}
@@ -60,21 +53,10 @@ func main() {
 		)
 	}
 
-	if cfg.QUICOnly {
-		opts = append(opts,
-			libp2p.Transport(quic.NewTransport),
-		)
-	} else {
-		opts = append(opts,
-			libp2p.Transport(quic.NewTransport),
-			libp2p.Transport(tcp.NewTCPTransport),
-		)
-	}
-
 	cm := connmgr.NewConnManager(
-		cfg.ConnMgrLo,
-		cfg.ConnMgrHi,
-		cfg.ConnMgrGrace,
+		cfg.ConnMgr.ConnMgrLo,
+		cfg.ConnMgr.ConnMgrHi,
+		cfg.ConnMgr.ConnMgrGrace,
 	)
 	opts = append(opts,
 		libp2p.ConnectionManager(cm),
@@ -93,14 +75,23 @@ func main() {
 		}
 	}
 
-	go listenPprof(cfg.PprofPort)
+	go listenPprof(cfg.Daemon.PprofPort)
 
 	time.Sleep(10 * time.Millisecond)
 	fmt.Printf("starting relay...\n")
 
-	_, err = relay.New(host, relay.WithResources(cfg.Resources()))
-	if err != nil {
-		panic(err)
+	if cfg.RelayV1.Enabled {
+		_, err = relayv1.NewRelay(host, relayv1.WithResources(cfg.RelayV1.Resources))
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if cfg.RelayV2.Enabled {
+		_, err = relayv2.New(host, relayv2.WithResources(cfg.RelayV2.Resources))
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	select {}
