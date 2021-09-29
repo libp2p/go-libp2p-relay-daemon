@@ -1,15 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
 	"time"
-
-	"github.com/libp2p/go-libp2p-core/crypto"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
@@ -20,40 +15,11 @@ import (
 	tls "github.com/libp2p/go-libp2p-tls"
 	tcp "github.com/libp2p/go-tcp-transport"
 
-	logging "github.com/ipfs/go-log/v2"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 
 	_ "net/http/pprof"
 )
-
-type Config struct {
-	// pprof
-	PprofPort int
-	// Networking
-	QUICOnly      bool
-	ListenAddrs   []string
-	AnnounceAddrs []string
-	// Connection Manager Limits
-	ConnMgrLo    int
-	ConnMgrHi    int
-	ConnMgrGrace time.Duration
-	// Relay Limits
-	RelayLimitDuration time.Duration
-	RelayLimitData     int64
-	// Relay Resources
-	ReservationTTL  time.Duration
-	MaxReservations int
-	MaxCircuits     int
-	BufferSize      int
-	// IP Constraints
-	MaxReservationsPerIP  int
-	MaxReservationsPerASN int
-}
-
-func init() {
-	logging.SetLogLevel("relay", "DEBUG")
-}
 
 func main() {
 	idPath := flag.String("id", "identity", "identity key file path")
@@ -138,96 +104,6 @@ func main() {
 	}
 
 	select {}
-}
-
-func loadConfig(cfgPath string) (Config, error) {
-	cfg := defaultConfig()
-
-	if cfgPath != "" {
-		cfgFile, err := os.Open(cfgPath)
-		if err != nil {
-			return Config{}, err
-		}
-		defer cfgFile.Close()
-
-		decoder := json.NewDecoder(cfgFile)
-		err = decoder.Decode(&cfg)
-		if err != nil {
-			return Config{}, err
-		}
-	}
-
-	return cfg, nil
-}
-
-func defaultConfig() Config {
-	return Config{
-		PprofPort:             6060,
-		QUICOnly:              true,
-		ListenAddrs:           []string{"/ip4/0.0.0.0/udp/4001/quic"},
-		ConnMgrLo:             1<<17 + 1<<16, // 192K
-		ConnMgrHi:             1 << 18,       // 256K
-		ConnMgrGrace:          5 * time.Minute,
-		RelayLimitDuration:    2 * time.Minute,
-		RelayLimitData:        1 << 17, // 128K
-		ReservationTTL:        time.Hour,
-		MaxReservations:       1 << 16, // 64K
-		MaxCircuits:           16,
-		BufferSize:            1024,
-		MaxReservationsPerIP:  4,
-		MaxReservationsPerASN: 128,
-	}
-}
-
-func (cfg *Config) Resources() relay.Resources {
-	return relay.Resources{
-		Limit: &relay.RelayLimit{
-			Duration: cfg.RelayLimitDuration,
-			Data:     cfg.RelayLimitData,
-		},
-		ReservationTTL:        cfg.ReservationTTL,
-		MaxReservations:       cfg.MaxReservations,
-		MaxCircuits:           cfg.MaxCircuits,
-		BufferSize:            cfg.BufferSize,
-		MaxReservationsPerIP:  cfg.MaxReservationsPerIP,
-		MaxReservationsPerASN: cfg.MaxReservationsPerASN,
-	}
-}
-
-func loadIdentity(idPath string) (crypto.PrivKey, error) {
-	if _, err := os.Stat(idPath); err == nil {
-		return readIdentity(idPath)
-	} else if os.IsNotExist(err) {
-		fmt.Printf("Generating peer identity in %s\n", idPath)
-		return generateIdentity(idPath)
-	} else {
-		return nil, err
-	}
-}
-
-func readIdentity(path string) (crypto.PrivKey, error) {
-	bytes, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	return crypto.UnmarshalPrivateKey(bytes)
-}
-
-func generateIdentity(path string) (crypto.PrivKey, error) {
-	privk, _, err := crypto.GenerateKeyPair(crypto.Ed25519, 0)
-	if err != nil {
-		return nil, err
-	}
-
-	bytes, err := crypto.MarshalPrivateKey(privk)
-	if err != nil {
-		return nil, err
-	}
-
-	err = ioutil.WriteFile(path, bytes, 0400)
-
-	return privk, err
 }
 
 func listenPprof(p int) {
