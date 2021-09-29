@@ -85,25 +85,33 @@ func main() {
 		fmt.Printf("\t%s/p2p/%s\n", addr, host.ID())
 	}
 
-	go listenPprof(cfg.Daemon.PprofPort)
-
 	time.Sleep(10 * time.Millisecond)
 	fmt.Printf("starting relay...\n")
 
+	acl, err := NewACL(host, cfg.ACL)
+	if err != nil {
+		panic(err)
+	}
+
 	if cfg.RelayV1.Enabled {
-		_, err = relayv1.NewRelay(host, relayv1.WithResources(cfg.RelayV1.Resources))
+		_, err = relayv1.NewRelay(host,
+			relayv1.WithResources(cfg.RelayV1.Resources),
+			relayv1.WithACL(acl))
 		if err != nil {
 			panic(err)
 		}
 	}
 
 	if cfg.RelayV2.Enabled {
-		_, err = relayv2.New(host, relayv2.WithResources(cfg.RelayV2.Resources))
+		_, err = relayv2.New(host,
+			relayv2.WithResources(cfg.RelayV2.Resources),
+			relayv2.WithACL(acl))
 		if err != nil {
 			panic(err)
 		}
 	}
 
+	go listenPprof(cfg.Daemon.PprofPort)
 	select {}
 }
 
