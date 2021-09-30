@@ -34,18 +34,18 @@ The configuration struct is as following (with defaults noted):
 ```go
 // relayd Configuration
 type Config struct {
-	Network NetworkConfig
-	ConnMgr ConnMgrConfig
-	RelayV1 RelayV1Config
-	RelayV2 RelayV2Config
-	ACL     ACLConfig
-	Daemon  DaemonConfig
+    Network NetworkConfig
+    ConnMgr ConnMgrConfig
+    RelayV1 RelayV1Config
+    RelayV2 RelayV2Config
+    ACL     ACLConfig
+    Daemon  DaemonConfig
 }
 
 // General daemon options
 type DaemonConfig struct {
     // pprof port; default is 6060
-	PprofPort int
+    PprofPort int
 }
 
 // Networking configuration
@@ -55,44 +55,44 @@ type NetworkConfig struct {
     //  [
     //    "/ip4/0.0.0.0/udp/4001/quic",
     //    "/ip6/::/udp/4001/quic",
-    //	  "/ip4/0.0.0.0/tcp/4001",
+    //    "/ip4/0.0.0.0/tcp/4001",
     //    "/ip6/::/tcp/4001",
     //  ]
-	ListenAddrs   []string
+    ListenAddrs   []string
 
     // Address to announce to the network, as multiaddrs.
     // Default is empty, which announces all public listen addresses to the network.
-	AnnounceAddrs []string
+    AnnounceAddrs []string
 }
 
 // Connection Manager configuration
 type ConnMgrConfig struct {
     // Connection low water mark; default is 512
-	ConnMgrLo    int
+    ConnMgrLo    int
 
     // Connection high water mark; default is 768
-	ConnMgrHi    int
+    ConnMgrHi    int
 
     // Connection grace period; default is 2 minutes
-	ConnMgrGrace time.Duration
+    ConnMgrGrace time.Duration
 }
 
 // Circuit Relay v1 support
 type RelayV1Config struct {
     // Whether to enable v1 relay; default is false
-	Enabled   bool
+    Enabled   bool
 
     // relayv1 resource limits; see below
-	Resources relayv1.Resources
+    Resources relayv1.Resources
 }
 
 // Circuit Relay v2 support
 type RelayV2Config struct {
     // whther to enable v2 relay; default is true
-	Enabled   bool
+    Enabled   bool
 
     // relayv2 resource limits; see below
-	Resources relayv2.Resources
+    Resources relayv2.Resources
 }
 
 // Access Control Lists
@@ -100,12 +100,12 @@ type ACLConfig struct {
     // List of peer IDs to allow reservations (v2) or hops to (v1).
     // If empty, then the relay is open and will allow reservations/relaying for any peer.
     // Default is empty.
-	AllowPeers   []string
+    AllowPeers   []string
 
     // List of (CIDR) subnets to allow reservations (v2) or hops to (v1).
     // If empty, then the relay is open and will allow reservations/relaying for any network.
     // Default is empty
-	AllowSubnets []string
+    AllowSubnets []string
 }
 
 ```
@@ -114,17 +114,17 @@ type ACLConfig struct {
 ```go
 // Rsources are the resource limits associated with the v1 relay service
 type Resources struct {
-	// MaxCircuits is the maximum number of active relay connections.
+    // MaxCircuits is the maximum number of active relay connections.
     // Default is 1024.
-	MaxCircuits int
+    MaxCircuits int
 
-	// MaxCircuitsPerPeer is the maximum number of active relay connections per peer
+    // MaxCircuitsPerPeer is the maximum number of active relay connections per peer
     // Default is 64.
-	MaxCircuitsPerPeer int
+    MaxCircuitsPerPeer int
 
-	// BufferSize is the buffer size for relaying in each direction.
+    // BufferSize is the buffer size for relaying in each direction.
     // Default is 4096
-	BufferSize int
+    BufferSize int
 }
 ```
 
@@ -132,43 +132,43 @@ type Resources struct {
 ```go
 // Resources are the resource limits associated with the v2 relay service.
 type Resources struct {
-	// Limit is the (optional) relayed connection limits.
-	Limit *RelayLimit
+    // Limit is the (optional) relayed connection limits.
+    Limit *RelayLimit
 
-	// ReservationTTL is the duration of a new (or refreshed reservation).
-	// Defaults to 1hr.
-	ReservationTTL time.Duration
+    // ReservationTTL is the duration of a new (or refreshed reservation).
+    // Defaults to 1hr.
+    ReservationTTL time.Duration
 
-	// MaxReservations is the maximum number of active relay slots; defaults to 128.
-	MaxReservations int
+    // MaxReservations is the maximum number of active relay slots; defaults to 128.
+    MaxReservations int
 
-	// MaxCircuits is the maximum number of open relay connections for each peer; defaults to 16.
-	MaxCircuits int
+    // MaxCircuits is the maximum number of open relay connections for each peer; defaults to 16.
+    MaxCircuits int
 
-	// BufferSize is the size of the relayed connection buffers; defaults to 2048.
-	BufferSize int
+    // BufferSize is the size of the relayed connection buffers; defaults to 2048.
+    BufferSize int
 
-	// MaxReservationsPerPeer is the maximum number of reservations originating from the same
-	// peer; default is 4.
-	MaxReservationsPerPeer int
+    // MaxReservationsPerPeer is the maximum number of reservations originating from the same
+    // peer; default is 4.
+    MaxReservationsPerPeer int
 
-	// MaxReservationsPerIP is the maximum number of reservations originating from the same
-	// IP address; default is 8.
-	MaxReservationsPerIP int
+    // MaxReservationsPerIP is the maximum number of reservations originating from the same
+    // IP address; default is 8.
+    MaxReservationsPerIP int
 
-	// MaxReservationsPerASN is the maximum number of reservations origination from the same
-	// ASN; default is 32
-	MaxReservationsPerASN int
+    // MaxReservationsPerASN is the maximum number of reservations origination from the same
+    // ASN; default is 32
+    MaxReservationsPerASN int
 }
 
 // RelayLimit are the per relayed connection resource limits.
 type RelayLimit struct {
-	// Duration is the time limit before resetting a relayed connection; defaults to 2min.
-	Duration time.Duration
+    // Duration is the time limit before resetting a relayed connection; defaults to 2min.
+    Duration time.Duration
 
-	// Data is the limit of data relayed (on each direction) before resetting the connection.
-	// Defaults to 128KB
-	Data int64
+    // Data is the limit of data relayed (on each direction) before resetting the connection.
+    // Defaults to 128KB
+    Data int64
 }
 ```
 
