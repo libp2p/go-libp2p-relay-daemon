@@ -6,8 +6,8 @@ for both protocol versions v1 and v2.
 ## Instalation
 
 ```
-git clone git@github.com:vyzo/libp2p-relay.git
-cd libp2p-relay
+git clone git@github.com:libp2/go-libp2p-relay-daemon.git
+cd go-libp2p-relay-daemon
 go install ./...
 ```
 
