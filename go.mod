@@ -1,4 +1,4 @@
-module github.com/vyzo/libp2p-relay
+module github.com/libp2p/go-libp2p-relay-daemon
 
 go 1.15
 
