@@ -88,37 +88,44 @@ func main() {
 	go listenPprof(cfg.Daemon.PprofPort)
 	time.Sleep(10 * time.Millisecond)
 
-	fmt.Printf("starting relay...\n")
-
 	acl, err := NewACL(host, cfg.ACL)
 	if err != nil {
 		panic(err)
 	}
 
 	if cfg.RelayV1.Enabled {
+		fmt.Printf("Starting RelayV1...\n")
+
 		_, err = relayv1.NewRelay(host,
 			relayv1.WithResources(cfg.RelayV1.Resources),
 			relayv1.WithACL(acl))
 		if err != nil {
 			panic(err)
 		}
+		fmt.Printf("RelayV1 is running!\n")
 	}
 
 	if cfg.RelayV2.Enabled {
+		fmt.Printf("Starting RelayV2...\n")
 		_, err = relayv2.New(host,
 			relayv2.WithResources(cfg.RelayV2.Resources),
 			relayv2.WithACL(acl))
 		if err != nil {
 			panic(err)
 		}
+		fmt.Printf("RelayV2 is running!\n")
 	}
 
 	select {}
 }
 
 func listenPprof(p int) {
+	if p == -1 {
+		fmt.Printf("The pprof debug is disabled\n")
+		return
+	}
 	addr := fmt.Sprintf("localhost:%d", p)
-	fmt.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
+	fmt.Printf("Registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
 	switch err := http.ListenAndServe(addr, nil); err {
 	case nil:
 		// all good, server is running and exited normally.
