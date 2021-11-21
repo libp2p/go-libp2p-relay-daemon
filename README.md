@@ -3,7 +3,15 @@
 This package provides `relayd`, a standalone daemon that provides libp2p circuit relay services,
 for both protocol versions v1 and v2.
 
-## Instalation
+- [Installation](#installation)
+  - [Running as a systemd service](#running-as-a-systemd-service)
+- [Identity](#identity)
+- [Configuration](#configuration)
+  - [Minimal config file](#minimal-config-file)
+  - [All configuration options](#all-configuration-options)
+
+
+## Installation
 
 ```
 git clone git@github.com:libp2/go-libp2p-relay-daemon.git
@@ -13,7 +21,7 @@ go install ./...
 
 This will install `relayd` in `$HOME/go/bin`.
 
-## Running as a systemd service
+### Running as a systemd service
 
 There is a service file and an associated launch script in `etc`.
 These two assume that you have installed as root [in your container].
@@ -28,7 +36,35 @@ You can specify the identity file path with the `-identity` option.
 ## Configuration
 
 `relayd` accepts a `-config` option that specifies its configuration; if omitted it will use
-the defaults. Any field omitted from the configuration will retain its default value.
+the defaults from `cmd/relayd/config.go`. Any field omitted from the configuration will retain its default value.
+
+### Minimal config file
+
+Below JSON config ensures only the circuit relay v2 is provided on custom ports:
+
+```json
+{
+  "RelayV2": {
+    "Enabled": true
+  },
+  "RelayV1": {
+    "Enabled": false
+  },
+  "Network": {
+    "ListenAddrs": [
+        "/ip4/0.0.0.0/udp/4002/quic",
+        "/ip6/::/udp/4002/quic",
+        "/ip4/0.0.0.0/tcp/4002",
+        "/ip6/::/tcp/4002",
+    ]
+  },
+  "Daemon": {
+    "PprofPort": 6061
+  }
+}
+```
+
+### All configuration options
 
 The configuration struct is as following (with defaults noted):
 ```go
@@ -44,7 +80,7 @@ type Config struct {
 
 // General daemon options
 type DaemonConfig struct {
-    // pprof port; default is 6060
+    // pprof port; default is 6060 (-1 disables pprof)
     PprofPort int
 }
 
