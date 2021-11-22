@@ -56,6 +56,8 @@ Below JSON config ensures only the circuit relay v2 is provided on custom ports:
         "/ip6/::/udp/4002/quic",
         "/ip4/0.0.0.0/tcp/4002",
         "/ip6/::/tcp/4002",
+        "/ip4/0.0.0.0/tcp/4003/ws",
+        "/ip6/::/tcp/4003/ws",
     ]
   },
   "Daemon": {
