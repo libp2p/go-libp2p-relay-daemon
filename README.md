@@ -1,6 +1,6 @@
-# relayd
+# libp2p-relay-daemon
 
-This package provides `relayd`, a standalone daemon that provides libp2p circuit relay services,
+This package provides `libp2p-relay-daemon`, a standalone daemon that provides libp2p circuit relay services,
 for both protocol versions v1 and v2.
 
 - [Installation](#installation)
@@ -19,7 +19,7 @@ cd go-libp2p-relay-daemon
 go install ./...
 ```
 
-This will install `relayd` in `$HOME/go/bin`.
+This will install `libp2p-relay-daemon` in `$HOME/go/bin`.
 
 ### Running as a systemd service
 
@@ -35,8 +35,8 @@ You can specify the identity file path with the `-identity` option.
 
 ## Configuration
 
-`relayd` accepts a `-config` option that specifies its configuration; if omitted it will use
-the defaults from `cmd/relayd/config.go`. Any field omitted from the configuration will retain its default value.
+`libp2p-relay-daemon` accepts a `-config` option that specifies its configuration; if omitted it will use
+the defaults from `cmd/libp2p-relay-daemon/config.go`. Any field omitted from the configuration will retain its default value.
 
 ### Minimal config file
 
@@ -70,7 +70,7 @@ Below JSON config ensures only the circuit relay v2 is provided on custom ports:
 
 The configuration struct is as following (with defaults noted):
 ```go
-// relayd Configuration
+// libp2p-relay-daemon Configuration
 type Config struct {
     Network NetworkConfig
     ConnMgr ConnMgrConfig

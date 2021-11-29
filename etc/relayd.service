@@ -1,7 +1,0 @@
-[Unit]
-Description=lotus traced
-After=network.target
-
-[Service]
-ExecStart=/root/relayd.sh
-PIDFile=/var/run/relayd.pid

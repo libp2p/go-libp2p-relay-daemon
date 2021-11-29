@@ -1,0 +1,7 @@
+[Unit]
+Description=lotus traced
+After=network.target
+
+[Service]
+ExecStart=/root/libp2p-relay-daemon.sh
+PIDFile=/var/run/libp2p-relay-daemon.pid
