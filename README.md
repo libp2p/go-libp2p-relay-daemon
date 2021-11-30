@@ -13,13 +13,24 @@ for both protocol versions v1 and v2.
 
 ## Installation
 
+To install the latest release:
+
+```
+go install github.com/libp2p/go-libp2p-relay-daemon/cmd/libp2p-relay-daemon@latest
+```
+
+The above will install `libp2p-relay-daemon` binary in `GOBIN` which defaults to `$GOPATH/bin` or `$HOME/go/bin` if the `GOPATH` is not set.
+
+
+### Development
+
+To build from local sources:
+
 ```
 git clone git@github.com:libp2/go-libp2p-relay-daemon.git
 cd go-libp2p-relay-daemon
 go install ./...
 ```
-
-This will install `libp2p-relay-daemon` in `$HOME/go/bin`.
 
 ### Running as a systemd service
 
@@ -57,7 +68,7 @@ Below JSON config ensures only the circuit relay v2 is provided on custom ports:
         "/ip4/0.0.0.0/tcp/4002",
         "/ip6/::/tcp/4002",
         "/ip4/0.0.0.0/tcp/4003/ws",
-        "/ip6/::/tcp/4003/ws",
+        "/ip6/::/tcp/4003/ws"
     ]
   },
   "Daemon": {
