@@ -1,7 +1,6 @@
 name: Sync with dist.ipfs.io
 
 on:
-  push: # TODO: remove this before merging PR
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
