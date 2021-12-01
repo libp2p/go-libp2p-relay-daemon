@@ -1,7 +1,7 @@
 # libp2p-relay-daemon
 
-This package provides `libp2p-relay-daemon`, a standalone daemon that provides libp2p circuit relay services,
-for both protocol versions v1 and v2.
+> A standalone daemon that provides libp2p circuit relay services,
+for both protocol versions [v1](https://github.com/libp2p/specs/blob/master/relay/circuit-v1.md) and [v2](https://github.com/libp2p/specs/blob/master/relay/circuit-v2.md).
 
 - [Installation](#installation)
   - [Running as a systemd service](#running-as-a-systemd-service)
