@@ -67,6 +67,10 @@ jobs:
             num_synced = 0;
             for (const release of resp.data) {
               console.log("checking release tagged", release.tag_name)
+              if (release.draft || release.prerelease) {
+                console.log("skipping draft/prerelease tagged", release.tag_name)
+                continue
+              }
               if (num_synced > max_synced) {
                 console.log("done: synced", max_synced, "latest releases")
                 break;
