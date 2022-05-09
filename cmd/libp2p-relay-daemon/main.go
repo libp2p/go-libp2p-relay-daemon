@@ -65,11 +65,15 @@ func main() {
 		)
 	}
 
-	cm := connmgr.NewConnManager(
+	cm, err := connmgr.NewConnManager(
 		cfg.ConnMgr.ConnMgrLo,
 		cfg.ConnMgr.ConnMgrHi,
-		cfg.ConnMgr.ConnMgrGrace,
+		connmgr.WithGracePeriod(cfg.ConnMgr.ConnMgrGrace),
 	)
+	if err != nil {
+		panic(err)
+	}
+
 	opts = append(opts,
 		libp2p.ConnectionManager(cm),
 	)
