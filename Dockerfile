@@ -1,10 +1,7 @@
 FROM  golang:alpine as builder
 WORKDIR /build
-COPY go.mod go.sum ./
-RUN go mod download
-COPY cmd ./
-RUN ls
-RUN go build -o /libp2p-relay-daemon ./libp2p-relay-daemon
+COPY . ./
+RUN go build -o /libp2p-relay-daemon ./cmd/libp2p-relay-daemon
 
 
 FROM alpine
