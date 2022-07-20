@@ -1,4 +1,4 @@
-package main
+package relaydaemon
 
 import (
 	"fmt"
@@ -16,6 +16,7 @@ import (
 	manet "github.com/multiformats/go-multiaddr/net"
 )
 
+// ACLFilter implements the libp2p relay ACL interface.
 type ACLFilter struct {
 	allowPeers   map[peer.ID]struct{}
 	allowSubnets []*net.IPNet
@@ -28,6 +29,8 @@ type ACLFilter struct {
 var _ relayv1.ACLFilter = (*ACLFilter)(nil)
 var _ relayv2.ACLFilter = (*ACLFilter)(nil)
 
+// NewACL returns an implementation of the relay ACL interface using the given
+// host and relay daemon ACL config.
 func NewACL(h host.Host, cfg ACLConfig) (*ACLFilter, error) {
 	acl := &ACLFilter{}
 
@@ -63,7 +66,7 @@ func NewACL(h host.Host, cfg ACLConfig) (*ACLFilter, error) {
 	return acl, nil
 }
 
-// relayv2 ACL
+// AllowReserve is relevant for the relayv2 ACL implementation.
 func (a *ACLFilter) AllowReserve(p peer.ID, addr ma.Multiaddr) bool {
 	if len(a.allowPeers) > 0 {
 		_, ok := a.allowPeers[p]
@@ -90,11 +93,13 @@ func (a *ACLFilter) AllowReserve(p peer.ID, addr ma.Multiaddr) bool {
 	return true
 }
 
+// AllowConnect is always true, as we are accepting any public node to be able
+// to contact the nodes allowed to make reservations through this relay.
 func (a *ACLFilter) AllowConnect(src peer.ID, srcAddr ma.Multiaddr, dest peer.ID) bool {
 	return true
 }
 
-// relayv1 ACL
+// AllowHop is relevant for relayv1 ACL implementation.
 func (a *ACLFilter) AllowHop(src, dest peer.ID) bool {
 	if len(a.allowPeers) > 0 {
 		_, ok := a.allowPeers[dest]
@@ -127,7 +132,9 @@ func (a *ACLFilter) AllowHop(src, dest peer.ID) bool {
 	return true
 }
 
-// notifications
+// Connected handles the Connect notification and stores the address of the
+// connected node so that the ACL can decide whether other nodes can connect
+// to it (relayV1).
 func (a *ACLFilter) Connected(n network.Network, c network.Conn) {
 	p := c.RemotePeer()
 	addr := c.RemoteMultiaddr()
@@ -144,6 +151,8 @@ func (a *ACLFilter) Connected(n network.Network, c network.Conn) {
 	addrs[addr] = struct{}{}
 }
 
+// Disconnected handles the Disconnect notification and deletes the address of
+// the disconnected node.
 func (a *ACLFilter) Disconnected(n network.Network, c network.Conn) {
 	p := c.RemotePeer()
 	addr := c.RemoteMultiaddr()

@@ -1,4 +1,4 @@
-package main
+package relaydaemon
 
 import (
 	"fmt"
@@ -8,18 +8,21 @@ import (
 	"github.com/libp2p/go-libp2p-core/crypto"
 )
 
-func loadIdentity(idPath string) (crypto.PrivKey, error) {
+// LoadIdentity reads a private key from the given path and, if it does not
+// exist, generates a new one.
+func LoadIdentity(idPath string) (crypto.PrivKey, error) {
 	if _, err := os.Stat(idPath); err == nil {
-		return readIdentity(idPath)
+		return ReadIdentity(idPath)
 	} else if os.IsNotExist(err) {
 		fmt.Printf("Generating peer identity in %s\n", idPath)
-		return generateIdentity(idPath)
+		return GenerateIdentity(idPath)
 	} else {
 		return nil, err
 	}
 }
 
-func readIdentity(path string) (crypto.PrivKey, error) {
+// ReadIdentity reads a private key from the given path.
+func ReadIdentity(path string) (crypto.PrivKey, error) {
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -28,7 +31,8 @@ func readIdentity(path string) (crypto.PrivKey, error) {
 	return crypto.UnmarshalPrivateKey(bytes)
 }
 
-func generateIdentity(path string) (crypto.PrivKey, error) {
+// GenerateIdentity writes a new random private key to the given path.
+func GenerateIdentity(path string) (crypto.PrivKey, error) {
 	privk, _, err := crypto.GenerateKeyPair(crypto.Ed25519, 0)
 	if err != nil {
 		return nil, err

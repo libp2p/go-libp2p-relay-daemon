@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p"
+	relaydaemon "github.com/libp2p/go-libp2p-relay-daemon"
 	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
@@ -22,11 +23,11 @@ func main() {
 	cfgPath := flag.String("config", "", "json configuration file; empty uses the default configuration")
 	flag.Parse()
 
-	cfg, err := loadConfig(*cfgPath)
+	cfg, err := relaydaemon.LoadConfig(*cfgPath)
 	if err != nil {
 		panic(err)
 	}
-	privk, err := loadIdentity(*idPath)
+	privk, err := relaydaemon.LoadIdentity(*idPath)
 	if err != nil {
 		panic(err)
 	}
@@ -92,7 +93,7 @@ func main() {
 	go listenPprof(cfg.Daemon.PprofPort)
 	time.Sleep(10 * time.Millisecond)
 
-	acl, err := NewACL(host, cfg.ACL)
+	acl, err := relaydaemon.NewACL(host, cfg.ACL)
 	if err != nil {
 		panic(err)
 	}
