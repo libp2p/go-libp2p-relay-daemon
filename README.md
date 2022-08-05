@@ -9,7 +9,7 @@ for both protocol versions [v1](https://github.com/libp2p/specs/blob/master/rela
 - [Configuration](#configuration)
   - [Minimal config file](#minimal-config-file)
   - [All configuration options](#all-configuration-options)
-
+- [Release process](#release-process)
 
 ## Installation
 
@@ -220,6 +220,12 @@ type RelayLimit struct {
     Data int64
 }
 ```
+
+## Release Process
+
+1. Bump version in `version.json` and wait for CI to create a tag in this repo
+2. Follow [ipfs/distributions#adding-a-version](https://github.com/ipfs/distributions#adding-a-version), wait for `master` branch there to finish and add new version to `/ipns/dist.ipfs.io/libp2p-relay-daemon/`
+3. Back to this repo, create Github Release, and attach artifacts from `/ipns/dist.ipfs.io/libp2p-relay-daemon/{version}`
 
 ## License
 
