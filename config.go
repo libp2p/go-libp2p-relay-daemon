@@ -92,10 +92,26 @@ func DefaultConfig() Config {
 	}
 }
 
-// LoadConfig reads a relay daemon JSON configuration from the given path.
-// The configuration is first initialized with DefaultConfig, so all unset
-// fields will take defaults from there.
-func LoadConfig(cfgPath string) (Config, error) {
+// LoadConfig reads a relay daemon JSON configuration from the given string
+// or a config file from the given path. The configuration is first initialized
+// with DefaultConfig, so all unset fields will take defaults from there.
+// The config file has higher priority than the config string.
+func LoadConfig(cfgPath, cfgStr string) (Config, error) {
+	cfg := DefaultConfig()
+	err := loadConfigFromString(cfgStr, &cfg)
+	if err != nil {
+		return Config{}, err
+	}
+
+	err = loadConfigFromString(cfgPath, &cfg)
+	if err != nil {
+		return Config{}, err
+	}
+
+	return cfg, nil
+}
+
+func loadConfigFromPath(cfgPath string) (Config, error) {
 	cfg := DefaultConfig()
 
 	if cfgPath != "" {
@@ -113,4 +129,14 @@ func LoadConfig(cfgPath string) (Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func loadConfigFromString(config string, cfg *Config) error {
+	if config != "" {
+		err := json.Unmarshal([]byte(config), cfg)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

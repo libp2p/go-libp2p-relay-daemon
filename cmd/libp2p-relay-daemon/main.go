@@ -19,9 +19,12 @@ import (
 func main() {
 	idPath := flag.String("id", "identity", "identity key file path")
 	cfgPath := flag.String("config", "", "json configuration file; empty uses the default configuration")
+	// allows passing in a JSON string rather than a file to provide easier programattic usage
+	cfgStr := flag.String("configString", "", "json string with the configuration; empty uses the default configuration")
+
 	flag.Parse()
 
-	cfg, err := relaydaemon.LoadConfig(*cfgPath)
+	cfg, err := relaydaemon.LoadConfig(*cfgPath, *cfgStr)
 	if err != nil {
 		panic(err)
 	}
