@@ -16,16 +16,17 @@ import (
 	manet "github.com/multiformats/go-multiaddr/net"
 )
 
+// Define the names of arguments here.
 const (
-	IDName     = "id"
-	ConfigName = "config"
-	PSKName    = "swarmkey"
+	NameID     = "id"
+	NameConfig = "config"
+	NamePSK    = "swarmkey"
 )
 
 func main() {
-	idPath := flag.String(IDName, "identity", "identity key file path")
-	cfgPath := flag.String(ConfigName, "", "json configuration file; empty uses the default configuration")
-	pskPath := flag.String(PSKName, "", "multicodec-encoded v1 private swarm key")
+	idPath := flag.String(NameID, "identity", "identity key file path")
+	cfgPath := flag.String(NameConfig, "", "json configuration file; empty uses the default configuration")
+	pskPath := flag.String(NamePSK, "", "file path to a multicodec-encoded v1 private swarm key")
 	flag.Parse()
 
 	cfg, err := relaydaemon.LoadConfig(*cfgPath)
