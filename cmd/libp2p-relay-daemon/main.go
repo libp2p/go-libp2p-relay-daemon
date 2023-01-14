@@ -43,18 +43,19 @@ func main() {
 		libp2p.UserAgent("relayd/1.0"),
 		libp2p.Identity(privk),
 		libp2p.DisableRelay(),
-		// libp2p.PrivateNetwork(),
 		libp2p.ListenAddrStrings(cfg.Network.ListenAddrs...),
 	)
 
 	// load PSK if applicable
-	psk, fprint, err := relaydaemon.LoadSwarmKey(*pskPath)
-	if err != nil {
-		fmt.Printf("error loading swarm key: %s\n", err.Error())
-	}
-	if psk != nil {
-		fmt.Printf("PSK detected, private identity: %x\n", fprint)
-		opts = append(opts, libp2p.PrivateNetwork(psk))
+	if pskPath != nil {
+		psk, fprint, err := relaydaemon.LoadSwarmKey(*pskPath)
+		if err != nil {
+			fmt.Printf("error loading swarm key: %s\n", err.Error())
+		}
+		if psk != nil {
+			fmt.Printf("PSK detected, private identity: %x\n", fprint)
+			opts = append(opts, libp2p.PrivateNetwork(psk))
+		}
 	}
 
 	if len(cfg.Network.AnnounceAddrs) > 0 {
