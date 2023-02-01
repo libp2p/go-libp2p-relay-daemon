@@ -44,6 +44,12 @@ The daemon creates and persists an identity in the first run, using `identity` a
 to store the private key for the identity.
 You can specify the identity file path with the `-identity` option.
 
+## Private Swarms
+
+The daemon can be instantiated using a multicodec-encoded V1 Private Swarm Key using the `-swarmkey` argument.
+Simply provide a filepath to the PSK and the daemon will automatically configure itself to use this for connections.
+Note that this limits the daemon to only use PSK-supported protocols, excluding QUIC and WebTransport as options.
+
 ## Configuration
 
 `libp2p-relay-daemon` accepts a `-config` option that specifies its configuration; if omitted it will use

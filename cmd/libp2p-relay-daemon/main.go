@@ -16,9 +16,17 @@ import (
 	manet "github.com/multiformats/go-multiaddr/net"
 )
 
+// Define the names of arguments here.
+const (
+	NameID     = "id"
+	NameConfig = "config"
+	NamePSK    = "swarmkey"
+)
+
 func main() {
-	idPath := flag.String("id", "identity", "identity key file path")
-	cfgPath := flag.String("config", "", "json configuration file; empty uses the default configuration")
+	idPath := flag.String(NameID, "identity", "identity key file path")
+	cfgPath := flag.String(NameConfig, "", "json configuration file; empty uses the default configuration")
+	pskPath := flag.String(NamePSK, "", "file path to a multicodec-encoded v1 private swarm key")
 	flag.Parse()
 
 	cfg, err := relaydaemon.LoadConfig(*cfgPath)
@@ -38,6 +46,18 @@ func main() {
 		libp2p.DisableRelay(),
 		libp2p.ListenAddrStrings(cfg.Network.ListenAddrs...),
 	)
+
+	// load PSK if applicable
+	if pskPath != nil {
+		psk, fprint, err := relaydaemon.LoadSwarmKey(*pskPath)
+		if err != nil {
+			fmt.Printf("error loading swarm key: %s\n", err.Error())
+		}
+		if psk != nil {
+			fmt.Printf("PSK detected, private identity: %x\n", fprint)
+			opts = append(opts, libp2p.PrivateNetwork(psk))
+		}
+	}
 
 	if len(cfg.Network.AnnounceAddrs) > 0 {
 		var announce []ma.Multiaddr
