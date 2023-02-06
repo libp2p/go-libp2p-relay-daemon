@@ -1,4 +1,4 @@
-FROM golang:1.18 as builder
+FROM golang:1.19 as builder
 WORKDIR /build
 COPY . ./
 RUN go build -o /libp2p-relay-daemon ./cmd/libp2p-relay-daemon
