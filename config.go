@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
 
@@ -14,7 +13,6 @@ import (
 type Config struct {
 	Network NetworkConfig
 	ConnMgr ConnMgrConfig
-	RelayV1 RelayV1Config
 	RelayV2 RelayV2Config
 	ACL     ACLConfig
 	Daemon  DaemonConfig
@@ -40,10 +38,10 @@ type ConnMgrConfig struct {
 
 // RelayV1Config controls activation of V1 circuits and resouce configuration
 // for them.
-type RelayV1Config struct {
-	Enabled   bool
-	Resources relayv1.Resources
-}
+// type RelayV1Config struct {
+// 	Enabled   bool
+// 	Resources relayv1.Resources
+// }
 
 // RelayV2Config controls activation of V2 circuits and resouce configuration
 // for them.
@@ -67,10 +65,17 @@ func DefaultConfig() Config {
 	return Config{
 		Network: NetworkConfig{
 			ListenAddrs: []string{
-				"/ip4/0.0.0.0/udp/4001/quic",
-				"/ip6/::/udp/4001/quic",
+				"/ip4/0.0.0.0/udp/9095/quic-v1",
+				"/ip4/0.0.0.0/udp/9095/quic-v1/webtransport",
 				"/ip4/0.0.0.0/tcp/4001",
-				"/ip6/::/tcp/4001",
+				"/ip4/0.0.0.0/tcp/9096/ws",
+				"/ip4/127.0.0.1/udp/9095/quic-v1/webtransport",
+				"/ip4/127.0.0.1/udp/9095/quic-v1/webtransport/certhash/uEiAaP2zrOyYeIFmagpOQg0K_6R4eD6aPxrZBrXzRnsVNUQ/certhash/uEiA4yfEqqYgLIDMaoZFAOEUDjyFL6YYHj3Wc7tf9ll-atg/p2p/12D3KooWEbomrRWemnfMBfgNMHdQmduTYZGmmLzTUXydfwU1iohy",
+			},
+			AnnounceAddrs: []string{
+				"/ip4/127.0.0.1/udp/9095/quic-v1/webtransport",
+				// "/ip4/127.0.0.1/udp/9095/quic-v1/webtransport/certhash/uEiAaP2zrOyYeIFmagpOQg0K_6R4eD6aPxrZBrXzRnsVNUQ/certhash/uEiA4yfEqqYgLIDMaoZFAOEUDjyFL6YYHj3Wc7tf9ll-atg/p2p/12D3KooWEbomrRWemnfMBfgNMHdQmduTYZGmmLzTUXydfwU1iohy",
+				// "/ip4/127.0.0.1/tcp/9096/ws",
 			},
 		},
 		ConnMgr: ConnMgrConfig{
@@ -78,10 +83,10 @@ func DefaultConfig() Config {
 			ConnMgrHi:    768,
 			ConnMgrGrace: 2 * time.Minute,
 		},
-		RelayV1: RelayV1Config{
-			Enabled:   false,
-			Resources: relayv1.DefaultResources(),
-		},
+		// RelayV1: RelayV1Config{
+		// 	Enabled:   false,
+		// 	Resources: relayv1.DefaultResources(),
+		// },
 		RelayV2: RelayV2Config{
 			Enabled:   true,
 			Resources: relayv2.DefaultResources(),

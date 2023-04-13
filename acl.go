@@ -8,7 +8,6 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
-	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
@@ -24,7 +23,6 @@ type ACLFilter struct {
 	addrs map[peer.ID]map[ma.Multiaddr]struct{}
 }
 
-var _ relayv1.ACLFilter = (*ACLFilter)(nil)
 var _ relayv2.ACLFilter = (*ACLFilter)(nil)
 
 // NewACL returns an implementation of the relay ACL interface using the given
@@ -98,37 +96,37 @@ func (a *ACLFilter) AllowConnect(src peer.ID, srcAddr ma.Multiaddr, dest peer.ID
 }
 
 // AllowHop is relevant for relayv1 ACL implementation.
-func (a *ACLFilter) AllowHop(src, dest peer.ID) bool {
-	if len(a.allowPeers) > 0 {
-		_, ok := a.allowPeers[dest]
-		if !ok {
-			return false
-		}
-	}
+// func (a *ACLFilter) AllowHop(src, dest peer.ID) bool {
+// 	if len(a.allowPeers) > 0 {
+// 		_, ok := a.allowPeers[dest]
+// 		if !ok {
+// 			return false
+// 		}
+// 	}
 
-	if len(a.allowSubnets) > 0 {
-		a.mx.RLock()
-		defer a.mx.RUnlock()
+// 	if len(a.allowSubnets) > 0 {
+// 		a.mx.RLock()
+// 		defer a.mx.RUnlock()
 
-		addrs := a.addrs[dest]
-		for addr := range addrs {
-			ip, err := manet.ToIP(addr)
-			if err != nil {
-				continue
-			}
+// 		addrs := a.addrs[dest]
+// 		for addr := range addrs {
+// 			ip, err := manet.ToIP(addr)
+// 			if err != nil {
+// 				continue
+// 			}
 
-			for _, ipnet := range a.allowSubnets {
-				if ipnet.Contains(ip) {
-					return true
-				}
-			}
-		}
+// 			for _, ipnet := range a.allowSubnets {
+// 				if ipnet.Contains(ip) {
+// 					return true
+// 				}
+// 			}
+// 		}
 
-		return false
-	}
+// 		return false
+// 	}
 
-	return true
-}
+// 	return true
+// }
 
 // Connected handles the Connect notification and stores the address of the
 // connected node so that the ACL can decide whether other nodes can connect
