@@ -27,7 +27,7 @@ The above will install `libp2p-relay-daemon` binary in `GOBIN` which defaults to
 To build from local sources:
 
 ```
-git clone git@github.com:libp2/go-libp2p-relay-daemon.git
+git clone git@github.com:libp2p/go-libp2p-relay-daemon.git
 cd go-libp2p-relay-daemon
 go install ./...
 ```
