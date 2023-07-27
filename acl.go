@@ -8,7 +8,6 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
-	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
@@ -24,7 +23,6 @@ type ACLFilter struct {
 	addrs map[peer.ID]map[ma.Multiaddr]struct{}
 }
 
-var _ relayv1.ACLFilter = (*ACLFilter)(nil)
 var _ relayv2.ACLFilter = (*ACLFilter)(nil)
 
 // NewACL returns an implementation of the relay ACL interface using the given
