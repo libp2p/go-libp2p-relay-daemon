@@ -10,7 +10,6 @@ import (
 	"github.com/libp2p/go-libp2p"
 	relaydaemon "github.com/libp2p/go-libp2p-relay-daemon"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
-	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
@@ -114,18 +113,6 @@ func main() {
 	acl, err := relaydaemon.NewACL(host, cfg.ACL)
 	if err != nil {
 		panic(err)
-	}
-
-	if cfg.RelayV1.Enabled {
-		fmt.Printf("Starting RelayV1...\n")
-
-		_, err = relayv1.NewRelay(host,
-			relayv1.WithResources(cfg.RelayV1.Resources),
-			relayv1.WithACL(acl))
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("RelayV1 is running!\n")
 	}
 
 	if cfg.RelayV2.Enabled {
