@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
 
@@ -13,6 +14,7 @@ import (
 type Config struct {
 	Network NetworkConfig
 	ConnMgr ConnMgrConfig
+	RelayV1 RelayV1Config
 	RelayV2 RelayV2Config
 	ACL     ACLConfig
 	Daemon  DaemonConfig
@@ -34,6 +36,13 @@ type ConnMgrConfig struct {
 	ConnMgrLo    int
 	ConnMgrHi    int
 	ConnMgrGrace time.Duration
+}
+
+// RelayV1Config controls activation of V1 circuits and resouce configuration
+// for them.
+type RelayV1Config struct {
+	Enabled   bool
+	Resources relayv1.Resources
 }
 
 // RelayV2Config controls activation of V2 circuits and resouce configuration
@@ -68,6 +77,10 @@ func DefaultConfig() Config {
 			ConnMgrLo:    512,
 			ConnMgrHi:    768,
 			ConnMgrGrace: 2 * time.Minute,
+		},
+		RelayV1: RelayV1Config{
+			Enabled:   false,
+			Resources: relayv1.DefaultResources(),
 		},
 		RelayV2: RelayV2Config{
 			Enabled:   true,
