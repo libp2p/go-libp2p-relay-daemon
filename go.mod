@@ -1,6 +1,6 @@
 module github.com/libp2p/go-libp2p-relay-daemon
 
-go 1.19
+go 1.20
 
 require (
 	github.com/libp2p/go-libp2p v0.24.0
