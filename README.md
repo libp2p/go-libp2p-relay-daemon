@@ -64,9 +64,6 @@ Below JSON config ensures only the circuit relay v2 is provided on custom ports:
   "RelayV2": {
     "Enabled": true
   },
-  "RelayV1": {
-    "Enabled": false
-  },
   "Network": {
     "ListenAddrs": [
         "/ip4/0.0.0.0/udp/4002/quic",
@@ -91,7 +88,6 @@ The configuration struct is as following (with defaults noted):
 type Config struct {
     Network NetworkConfig
     ConnMgr ConnMgrConfig
-    RelayV1 RelayV1Config
     RelayV2 RelayV2Config
     ACL     ACLConfig
     Daemon  DaemonConfig
@@ -130,15 +126,6 @@ type ConnMgrConfig struct {
 
     // Connection grace period; default is 2 minutes
     ConnMgrGrace time.Duration
-}
-
-// Circuit Relay v1 support
-type RelayV1Config struct {
-    // Whether to enable v1 relay; default is false
-    Enabled   bool
-
-    // relayv1 resource limits; see below
-    Resources relayv1.Resources
 }
 
 // Circuit Relay v2 support
