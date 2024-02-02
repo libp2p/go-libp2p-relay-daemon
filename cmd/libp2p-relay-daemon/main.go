@@ -1,18 +1,25 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
-	"net/http"
-	_ "net/http/pprof"
-	"time"
-
 	"github.com/libp2p/go-libp2p"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	relaydaemon "github.com/libp2p/go-libp2p-relay-daemon"
+	libp2phost "github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/routing"
+	rcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
+	"time"
 )
 
 // Define the names of arguments here.
@@ -37,6 +44,23 @@ func main() {
 		panic(err)
 	}
 
+	http.Handle("/metrics", promhttp.Handler())
+	go func() {
+		http.Handle("/debug/metrics/prometheus", promhttp.Handler())
+		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Daemon.PromPort), nil))
+	}()
+
+	rcmgr.MustRegisterWith(prometheus.DefaultRegisterer)
+
+	str, err := rcmgr.NewStatsTraceReporter()
+	if err != nil {
+		log.Fatal(err)
+	}
+	rmgr, err := rcmgr.NewResourceManager(rcmgr.NewFixedLimiter(rcmgr.DefaultLimits.AutoScale()), rcmgr.WithTraceReporter(str))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var opts []libp2p.Option
 
 	opts = append(opts,
@@ -44,6 +68,7 @@ func main() {
 		libp2p.Identity(privk),
 		libp2p.DisableRelay(),
 		libp2p.ListenAddrStrings(cfg.Network.ListenAddrs...),
+		libp2p.ResourceManager(rmgr),
 	)
 
 	// load PSK if applicable
@@ -92,15 +117,27 @@ func main() {
 		panic(err)
 	}
 
+	ctx := context.Background()
+	var kaddht *dht.IpfsDHT
+	newDHT := func(h libp2phost.Host) (routing.PeerRouting, error) {
+		var err error
+		kaddht, err = dht.New(ctx, h, dht.Mode(dht.ModeServer))
+		return kaddht, err
+	}
+
 	opts = append(opts,
 		libp2p.ConnectionManager(cm),
+		libp2p.Routing(newDHT),
 	)
 
 	host, err := libp2p.New(opts...)
 	if err != nil {
 		panic(err)
 	}
-
+	err = kaddht.Bootstrap(ctx)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("I am %s\n", host.ID())
 	fmt.Printf("Public Addresses:\n")
 	for _, addr := range host.Addrs() {

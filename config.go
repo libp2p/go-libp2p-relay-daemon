@@ -21,6 +21,7 @@ type Config struct {
 // DaemonConfig controls settings for the relay-daemon itself.
 type DaemonConfig struct {
 	PprofPort int
+	PromPort  int
 }
 
 // NetworkConfig controls listen and annouce settings for the libp2p host.
