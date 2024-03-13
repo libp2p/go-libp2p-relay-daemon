@@ -2,7 +2,6 @@ module github.com/libp2p/go-libp2p-relay-daemon
 
 go 1.21
 
-
 require (
 	github.com/libp2p/go-libp2p v0.30.0
 	github.com/multiformats/go-multiaddr v0.11.0
