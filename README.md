@@ -7,7 +7,10 @@ for both protocol versions [v1](https://github.com/libp2p/specs/blob/master/rela
   - [Source](#from-source)
   - [Unofficial Ubuntu PPA](#unofficial-ubuntu-ppa)
   - [Development Builds](#development-builds)
-- [Identity file](#identity-file)
+- [Tips & Tricks](#tips)
+  - [Standalone service unit](#running-as-a-standalone-systemd-service)
+  - [Identity file](#identity-file)
+  - [Private swarms](#private-swarms)
 - [Configuration](#configuration)
   - [Minimal config file](#minimal-config-file)
   - [All configuration options](#all-configuration-options)
@@ -62,19 +65,21 @@ cd go-libp2p-relay-daemon
 go install ./...
 ```
 
-## Running as a standalone systemd service
+## Tips
+
+### Running as a standalone systemd service
 
 There is a service file and an associated launch script in [`etc`](./etc) subdirectory.
 These two scripts assume that you have installed as root [in your container].
 If your installation path differs, you should adjust them accordingly.
 
-## Identity File
+### Identity File
 
 The daemon creates and persists an identity in the first run, using `identity` as the file
 to store the private key for the identity.
 You can specify the identity file path with the `-identity` option.
 
-## Private Swarms
+### Private Swarms
 
 The daemon can be instantiated using a multicodec-encoded V1 Private Swarm Key using the `-swarmkey` argument.
 Simply provide a filepath to the PSK and the daemon will automatically configure itself to use this for connections.
