@@ -49,7 +49,7 @@ exit
 sudo apt update
 sudo apt install libp2p-relay
 ```
-where `<<DISTRO>>` is the codename of your Ubuntu distribution (for example, `jammy` for 22.04 LTS). During the first installation the package maintenance script may automatically ask you about which networking profile, CPU accounting model, and/or existing node configuration file you want to use.
+where `<<DISTRO>>` is the codename of your Ubuntu distribution (for example, `jammy` for 22.04 LTS).
 
 **NOTE**: this method also may work with any compatible Debian-based distro which has `libc6` inside, `systemd`, and APT as a package manager.
 
