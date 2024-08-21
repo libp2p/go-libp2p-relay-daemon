@@ -77,7 +77,7 @@ If your installation path differs, you should adjust them accordingly.
 
 The daemon creates and persists an identity in the first run, using `identity` as the file
 to store the private key for the identity.
-You can specify the identity file path with the `-identity` option.
+You can specify the identity file path with the `-id` option.
 
 ### Private Swarms
 
