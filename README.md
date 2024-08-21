@@ -21,6 +21,32 @@ go install github.com/libp2p/go-libp2p-relay-daemon/cmd/libp2p-relay-daemon@late
 
 The above will install `libp2p-relay-daemon` binary in `GOBIN` which defaults to `$GOPATH/bin` or `$HOME/go/bin` if the `GOPATH` is not set.
 
+### Unofficial Ubuntu PPA
+
+The `systemd` service running the relay with the default settings and limited allowed CPU loads can be also installed for most Debian/Ubuntu-based distributions from the dedicated [Ubuntu PPA](https://launchpad.net/~twdragon/+archive/ubuntu/ipfs):
+
+#### Latest Ubuntu (>= 20.04 LTS)
+```sh
+sudo add-apt-repository ppa:twdragon/ipfs
+sudo apt update
+sudo apt install libp2p-relay
+```
+
+#### Any Ubuntu version
+
+```sh
+sudo su
+echo 'deb https://ppa.launchpadcontent.net/twdragon/ipfs/ubuntu <<DISTRO>> main' >> /etc/apt/sources.list.d/ipfs
+echo 'deb-src https://ppa.launchpadcontent.net/twdragon/ipfs/ubuntu <<DISTRO>> main' >> /etc/apt/sources.list.d/ipfs
+exit
+sudo apt update
+sudo apt install libp2p-relay
+```
+where `<<DISTRO>>` is the codename of your Ubuntu distribution (for example, `jammy` for 22.04 LTS). During the first installation the package maintenance script may automatically ask you about which networking profile, CPU accounting model, and/or existing node configuration file you want to use.
+
+**NOTE**: this method also may work with any compatible Debian-based distro which has `libc6` inside, `systemd`, and APT as a package manager.
+
+The development of the Debian packaging pipeline lives in the [dedicated Github repository](https://github.com/twdragon/ipfs-debian-pkg).
 
 ### Development
 
