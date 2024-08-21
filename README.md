@@ -4,14 +4,18 @@
 for both protocol versions [v1](https://github.com/libp2p/specs/blob/master/relay/circuit-v1.md) and [v2](https://github.com/libp2p/specs/blob/master/relay/circuit-v2.md).
 
 - [Installation](#installation)
-  - [Running as a systemd service](#running-as-a-systemd-service)
-- [Identity](#identity)
+  - [Source](#from-source)
+  - [Unofficial Ubuntu PPA](#unofficial-ubuntu-ppa)
+  - [Development Builds](#development-builds)
+- [Identity file](#identity-file)
 - [Configuration](#configuration)
   - [Minimal config file](#minimal-config-file)
   - [All configuration options](#all-configuration-options)
 - [Release process](#release-process)
 
 ## Installation
+
+### From Source
 
 To install the latest release:
 
@@ -48,7 +52,7 @@ where `<<DISTRO>>` is the codename of your Ubuntu distribution (for example, `ja
 
 The development of the Debian packaging pipeline lives in the [dedicated Github repository](https://github.com/twdragon/ipfs-debian-pkg).
 
-### Development
+### Development Builds
 
 To build from local sources:
 
@@ -58,13 +62,13 @@ cd go-libp2p-relay-daemon
 go install ./...
 ```
 
-### Running as a systemd service
+## Running as a standalone systemd service
 
-There is a service file and an associated launch script in `etc`.
-These two assume that you have installed as root [in your container].
-If your installation path differs, adjust accordingly.
+There is a service file and an associated launch script in [`etc`](./etc) subdirectory.
+These two scripts assume that you have installed as root [in your container].
+If your installation path differs, you should adjust them accordingly.
 
-## Identity
+## Identity File
 
 The daemon creates and persists an identity in the first run, using `identity` as the file
 to store the private key for the identity.
