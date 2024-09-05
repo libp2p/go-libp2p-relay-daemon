@@ -66,8 +66,12 @@ Below JSON config ensures only the circuit relay v2 is provided on custom ports:
   },
   "Network": {
     "ListenAddrs": [
-        "/ip4/0.0.0.0/udp/4002/quic",
-        "/ip6/::/udp/4002/quic",
+        "/ip4/0.0.0.0/udp/4002/quic-v1",
+        "/ip6/::/udp/4002/quic-v1",
+        "/ip4/0.0.0.0/udp/4002/webrtc-direct",
+        "/ip6/::/udp/4002/webrtc-direct",
+        "/ip4/0.0.0.0/udp/4002/quic-v1/webtransport",
+        "/ip6/::/udp/4002/quic-v1/webtransport",
         "/ip4/0.0.0.0/tcp/4002",
         "/ip6/::/tcp/4002",
         "/ip4/0.0.0.0/tcp/4003/ws",
@@ -104,10 +108,14 @@ type NetworkConfig struct {
     // Addresses to listen on, as multiaddrs.
     // Default:
     //  [
-    //    "/ip4/0.0.0.0/udp/4001/quic",
-    //    "/ip6/::/udp/4001/quic",
-    //    "/ip4/0.0.0.0/tcp/4001",
-    //    "/ip6/::/tcp/4001",
+    //      "/ip4/0.0.0.0/udp/4001/quic-v1",
+    //      "/ip6/::/udp/4001/quic-v1",
+    //      "/ip4/0.0.0.0/udp/4001/webrtc-direct",
+    //      "/ip6/::/udp/4001/webrtc-direct",
+    //      "/ip4/0.0.0.0/udp/4001/quic-v1/webtransport",
+    //      "/ip6/::/udp/4001/quic-v1/webtransport",
+    //      "/ip4/0.0.0.0/tcp/4001",
+    //      "/ip6/::/tcp/4001",
     //  ]
     ListenAddrs   []string
 
@@ -217,8 +225,8 @@ type RelayLimit struct {
 ## Release Process
 
 1. Bump version in `version.json` and wait for CI to create a tag in this repo
-2. Follow [ipfs/distributions#adding-a-version](https://github.com/ipfs/distributions#adding-a-version), wait for `master` branch there to finish and add new version to `/ipns/dist.ipfs.io/libp2p-relay-daemon/`
-3. Back to this repo, create Github Release, and attach artifacts from `/ipns/dist.ipfs.io/libp2p-relay-daemon/{version}`
+2. Follow [ipfs/distributions#adding-a-version](https://github.com/ipfs/distributions#adding-a-version), wait for `master` branch there to finish and add new version to `/ipns/dist.ipfs.tech/libp2p-relay-daemon/`
+3. Back to this repo, create Github Release, and attach artifacts from `/ipns/dist.ipfs.tech/libp2p-relay-daemon/{version}`
 
 ## License
 

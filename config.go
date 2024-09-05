@@ -58,8 +58,12 @@ func DefaultConfig() Config {
 	return Config{
 		Network: NetworkConfig{
 			ListenAddrs: []string{
-				"/ip4/0.0.0.0/udp/4001/quic",
-				"/ip6/::/udp/4001/quic",
+				"/ip4/0.0.0.0/udp/4001/quic-v1",
+				"/ip6/::/udp/4001/quic-v1",
+				"/ip4/0.0.0.0/udp/4001/webrtc-direct",
+				"/ip6/::/udp/4001/webrtc-direct",
+				"/ip4/0.0.0.0/udp/4001/quic-v1/webtransport",
+				"/ip6/::/udp/4001/quic-v1/webtransport",
 				"/ip4/0.0.0.0/tcp/4001",
 				"/ip6/::/tcp/4001",
 			},
