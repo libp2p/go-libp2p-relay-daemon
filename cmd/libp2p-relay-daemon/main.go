@@ -119,6 +119,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("RelayV2 is running!\n")
+	fmt.Println("WARNING: this project is no longer maintained, see https://github.com/libp2p/go-libp2p-relay-daemon#readme")
 
 	select {}
 }
