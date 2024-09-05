@@ -1,3 +1,11 @@
+> [!WARNING]
+> # No longer maintained. No longer relevant.
+>
+> This project is no longer maintained, was used in transitional period when ecosystem was switching from V1 to [V2](https://github.com/libp2p/specs/blob/master/relay/circuit-v2.md).
+> `go-libp2p` >= `v0.26.0` [no longer supports Relay V1](https://github.com/libp2p/go-libp2p/issues/2075), making this project outdated.
+>
+> Modern deployments should implement their own relay setups based on [Relay V2 protocol](https://github.com/libp2p/specs/blob/master/relay/circuit-v2.md), which is supported via [go-libp2p](https://github.com/libp2p/go-libp2p) and `libp2p.EnableRelayService`
+
 # libp2p-relay-daemon
 
 > A standalone daemon that provides libp2p circuit relay services,
@@ -66,8 +74,12 @@ Below JSON config ensures only the circuit relay v2 is provided on custom ports:
   },
   "Network": {
     "ListenAddrs": [
-        "/ip4/0.0.0.0/udp/4002/quic",
-        "/ip6/::/udp/4002/quic",
+        "/ip4/0.0.0.0/udp/4002/quic-v1",
+        "/ip6/::/udp/4002/quic-v1",
+        "/ip4/0.0.0.0/udp/4002/webrtc-direct",
+        "/ip6/::/udp/4002/webrtc-direct",
+        "/ip4/0.0.0.0/udp/4002/quic-v1/webtransport",
+        "/ip6/::/udp/4002/quic-v1/webtransport",
         "/ip4/0.0.0.0/tcp/4002",
         "/ip6/::/tcp/4002",
         "/ip4/0.0.0.0/tcp/4003/ws",
@@ -104,10 +116,14 @@ type NetworkConfig struct {
     // Addresses to listen on, as multiaddrs.
     // Default:
     //  [
-    //    "/ip4/0.0.0.0/udp/4001/quic",
-    //    "/ip6/::/udp/4001/quic",
-    //    "/ip4/0.0.0.0/tcp/4001",
-    //    "/ip6/::/tcp/4001",
+    //      "/ip4/0.0.0.0/udp/4001/quic-v1",
+    //      "/ip6/::/udp/4001/quic-v1",
+    //      "/ip4/0.0.0.0/udp/4001/webrtc-direct",
+    //      "/ip6/::/udp/4001/webrtc-direct",
+    //      "/ip4/0.0.0.0/udp/4001/quic-v1/webtransport",
+    //      "/ip6/::/udp/4001/quic-v1/webtransport",
+    //      "/ip4/0.0.0.0/tcp/4001",
+    //      "/ip6/::/tcp/4001",
     //  ]
     ListenAddrs   []string
 
@@ -217,8 +233,8 @@ type RelayLimit struct {
 ## Release Process
 
 1. Bump version in `version.json` and wait for CI to create a tag in this repo
-2. Follow [ipfs/distributions#adding-a-version](https://github.com/ipfs/distributions#adding-a-version), wait for `master` branch there to finish and add new version to `/ipns/dist.ipfs.io/libp2p-relay-daemon/`
-3. Back to this repo, create Github Release, and attach artifacts from `/ipns/dist.ipfs.io/libp2p-relay-daemon/{version}`
+2. Follow [ipfs/distributions#adding-a-version](https://github.com/ipfs/distributions#adding-a-version), wait for `master` branch there to finish and add new version to `/ipns/dist.ipfs.tech/libp2p-relay-daemon/`
+3. Back to this repo, create Github Release, and attach artifacts from `/ipns/dist.ipfs.tech/libp2p-relay-daemon/{version}`
 
 ## License
 

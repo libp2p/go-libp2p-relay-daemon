@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -12,7 +13,6 @@ import (
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 	ma "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr/net"
 )
 
 // Define the names of arguments here.
@@ -43,7 +43,10 @@ func main() {
 		libp2p.UserAgent("relayd/1.0"),
 		libp2p.Identity(privk),
 		libp2p.DisableRelay(),
-		libp2p.ListenAddrStrings(cfg.Network.ListenAddrs...),
+		libp2p.NATPortMap(),
+		libp2p.EnableHolePunching(),
+		libp2p.DefaultTransports,
+		libp2p.DefaultMuxers,
 	)
 
 	// load PSK if applicable
@@ -58,6 +61,12 @@ func main() {
 		}
 	}
 
+	if len(cfg.Network.ListenAddrs) == 0 {
+		opts = append(opts, libp2p.DefaultListenAddrs)
+	} else {
+		opts = append(opts, libp2p.ListenAddrStrings(cfg.Network.ListenAddrs...))
+	}
+
 	if len(cfg.Network.AnnounceAddrs) > 0 {
 		var announce []ma.Multiaddr
 		for _, s := range cfg.Network.AnnounceAddrs {
@@ -66,18 +75,6 @@ func main() {
 		}
 		opts = append(opts,
 			libp2p.AddrsFactory(func([]ma.Multiaddr) []ma.Multiaddr {
-				return announce
-			}),
-		)
-	} else {
-		opts = append(opts,
-			libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
-				announce := make([]ma.Multiaddr, 0, len(addrs))
-				for _, a := range addrs {
-					if manet.IsPublicAddr(a) {
-						announce = append(announce, a)
-					}
-				}
 				return announce
 			}),
 		)
@@ -102,10 +99,7 @@ func main() {
 	}
 
 	fmt.Printf("I am %s\n", host.ID())
-	fmt.Printf("Public Addresses:\n")
-	for _, addr := range host.Addrs() {
-		fmt.Printf("\t%s/p2p/%s\n", addr, host.ID())
-	}
+	fmt.Printf("Libp2p listening on %v\n", host.Addrs())
 
 	go listenPprof(cfg.Daemon.PprofPort)
 	time.Sleep(10 * time.Millisecond)
@@ -115,16 +109,17 @@ func main() {
 		panic(err)
 	}
 
-	if cfg.RelayV2.Enabled {
-		fmt.Printf("Starting RelayV2...\n")
-		_, err = relayv2.New(host,
-			relayv2.WithResources(cfg.RelayV2.Resources),
-			relayv2.WithACL(acl))
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("RelayV2 is running!\n")
+	if !cfg.RelayV2.Enabled {
+		panic(errors.New("RelayV2.Enabled=false is no longer supported. V2 is the only supported version now (https://github.com/libp2p/go-libp2p/issues/2075)"))
 	}
+	_, err = relayv2.New(host,
+		relayv2.WithResources(cfg.RelayV2.Resources),
+		relayv2.WithACL(acl))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("RelayV2 is running!\n")
+	fmt.Println("WARNING: this project is no longer maintained, see https://github.com/libp2p/go-libp2p-relay-daemon#readme")
 
 	select {}
 }
