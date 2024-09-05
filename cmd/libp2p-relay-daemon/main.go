@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -108,16 +109,16 @@ func main() {
 		panic(err)
 	}
 
-	if cfg.RelayV2.Enabled {
-		fmt.Printf("Starting RelayV2...\n")
-		_, err = relayv2.New(host,
-			relayv2.WithResources(cfg.RelayV2.Resources),
-			relayv2.WithACL(acl))
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("RelayV2 is running!\n")
+	if !cfg.RelayV2.Enabled {
+		panic(errors.New("RelayV2.Enabled=false is no longer supported. V2 is the only supported version now (https://github.com/libp2p/go-libp2p/issues/2075)"))
 	}
+	_, err = relayv2.New(host,
+		relayv2.WithResources(cfg.RelayV2.Resources),
+		relayv2.WithACL(acl))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("RelayV2 is running!\n")
 
 	select {}
 }

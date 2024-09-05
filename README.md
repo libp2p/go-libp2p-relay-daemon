@@ -1,3 +1,11 @@
+> [!WARNING]
+> # No longer maintained. No longer relevant.
+>
+> This project is no longer maintained, was used in transitional period when ecosystem was switching from V1 to [V2](https://github.com/libp2p/specs/blob/master/relay/circuit-v2.md).
+> `go-libp2p` >= `v0.26.0` [no longer supports Relay V1](https://github.com/libp2p/go-libp2p/issues/2075), making this project outdated.
+>
+> Modern deployments should implement their own relay setups based on [Relay V2 protocol](https://github.com/libp2p/specs/blob/master/relay/circuit-v2.md), which is supported via [go-libp2p](https://github.com/libp2p/go-libp2p) and `libp2p.EnableRelayService`
+
 # libp2p-relay-daemon
 
 > A standalone daemon that provides libp2p circuit relay services,
